@@ -45,7 +45,7 @@ main{flex:1;overflow:auto;min-width:0}
 @media(max-width:760px){aside{position:absolute;z-index:30;top:0;bottom:0;left:0;transform:translateX(-100%);transition:transform .2s}aside.open{transform:none;box-shadow:6px 0 20px rgba(0,0,0,.5)}.mc{padding:1px}.ev .eb{padding:1px 3px}.tg{min-width:640px}.mg{min-width:100%}}
 @media(min-width:761px){#bg{display:none}}
 @media(prefers-reduced-motion:reduce){aside{transition:none}}
-</style><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#14151a"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/icon-180.png"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script></head><body>
+.md .row input.hx{width:92px;flex:none;font-family:Consolas,monospace;text-transform:uppercase}.md .acts.st{position:sticky;bottom:-16px;background:var(--sf);padding:10px 0 0;border-top:1px solid var(--bd);z-index:2}</style><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#14151a"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/icon-180.png"><script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script></head><body>
 <header><button id="bg" aria-label="Filtres">☰</button><button id="td">Aujourd’hui</button><button id="pv" aria-label="Précédent">‹</button><button id="nx" aria-label="Suivant">›</button><h1 id="ti"></h1>
 <div class="tabs" id="tabs"></div><button id="st" title="Paramètres">⚙ Réglages</button><button id="im" title="Importer un fichier .ics">⇪ Importer</button><span id="sy" style="font-size:12px;color:var(--mu)"></span><button id="lo">Déconnexion</button><button id="th" aria-label="Thème">◐</button><input type="file" id="fi" accept=".ics,text/calendar" hidden></header>
 <div class="wrap"><aside id="sd"></aside><main id="mn"></main></div>
@@ -63,6 +63,7 @@ const defCats=()=>[
 {id:'loisirs',name:'Loisirs créatifs',color:'#982649',subs:[]},
 {id:'quotidien',name:'Quotidien',color:'#FEC601',subs:[]},
 {id:'sport',name:'Sport',color:'#137547',subs:[{id:'marche',name:'Marche',color:'#00E5A0'},{id:'step',name:'Step',color:'#FF7A59'}]}];
+const PAL=['#C77DFF','#FF7A59','#00E5A0','#FFD23F','#FF4FA3','#4CC9F0','#B5E48C','#F4A261'];
 const pad=n=>String(n).padStart(2,'0');
 const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 const day0=d=>{d=new Date(d);d.setHours(0,0,0,0);return d};
@@ -105,7 +106,7 @@ function list(){const f=day0(new Date()),L=occ(f,addD(f,90));if(!L.length){$('mn
 let h='<div class="ls">',last='';L.forEach(o=>{const k=o.s.toDateString();if(k!==last){h+=`<h4>${fmt(o.s,{weekday:'long',day:'numeric',month:'long'})}</h4>`;last=k}h+=chip(o,true)});$('mn').innerHTML=h+'</div>'}
 function nav(n){const v=S.view,d=new Date(S.date);if(v==='month')d.setMonth(d.getMonth()+n);else d.setDate(d.getDate()+n*(v==='week'?7:1));S.date=d;render()}
 function modal(h){$('mo').innerHTML=h?`<div class="ov" id="ov"><div class="md">${h}</div></div>`:''}
-function opts(c,s){return'<option value="">Aucune</option>'+cat(c).subs.map(x=>`<option value="${x.id}" ${x.id===s?'selected':''}>${esc(x.name)}</option>`).join('')}
+function opts(c,s){return'<option value="">Aucune</option>'+cat(c).subs.map(x=>`<option value="${x.id}" ${x.id===s?'selected':''}>${esc(x.name)}</option>`).join('')+'<option value="__new">+ Nouvelle sous-catégorie…</option>'}
 function edit(id,startISO){const ev=S.events.find(e=>e.id===id)||{id:'',title:'',start:startISO,end:iso(new Date(+new Date(startISO)+36e5)),cat:S.cats[0].id,sub:'',rep:'none',notes:''};
 const D=x=>x.slice(0,10),T=x=>x.slice(11,16);
 modal(`<h2>${id?'Modifier':'Nouvel'} événement</h2><label>Titre</label><input id="e_t" value="${esc(ev.title)}" placeholder="Ex. Marche du matin"><label>Date</label><input type="date" id="e_d" value="${D(ev.start)}"><div class="r2"><div><label>Début</label><input type="time" id="e_s" value="${T(ev.start)}"></div><div><label>Fin</label><input type="time" id="e_e" value="${T(ev.end)}"></div></div>
@@ -113,18 +114,19 @@ modal(`<h2>${id?'Modifier':'Nouvel'} événement</h2><label>Titre</label><input 
 <div class="pv" id="e_p"></div><label>Lieu (adresse ou nom d’un endroit)</label><div class="row"><input type="text" id="e_l" value="${esc(ev.loc||'')}" placeholder="Ex. 12 rue de la Gare, Thionville"><a id="e_m" class="mp" target="_blank" rel="noopener">📍 Maps</a></div><label>Répétition</label><select id="e_r">${[['none','Aucune'],['daily','Chaque jour'],['weekly','Chaque semaine'],['monthly','Chaque mois'],['yearly','Chaque année']].map(([k,l])=>`<option value="${k}" ${k===ev.rep?'selected':''}>${l}</option>`).join('')}</select><label>Notes</label><textarea id="e_n" rows="3">${esc(ev.notes)}</textarea>
 <div class="acts">${id?'<button id="e_x" style="margin-right:auto">Supprimer</button>':''}<button id="e_k">Annuler</button><button class="pr" id="e_ok">Enregistrer</button></div>`);
 const pv=()=>{const o={ev:{id:'',title:$('e_t').value||'Aperçu',cat:$('e_c').value,sub:$('e_u').value},s:new Date(),e:new Date()};$('e_p').innerHTML=chip(o)};pv();
-$('e_c').onchange=()=>{$('e_u').innerHTML=opts($('e_c').value,'');pv()};$('e_u').onchange=pv;$('e_t').oninput=pv;const ml=()=>{const q=$('e_l').value.trim(),a=$('e_m');a.classList.toggle('off',!q);a.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q)};$('e_l').oninput=ml;ml();$('e_k').onclick=()=>modal('');
+$('e_c').onchange=()=>{$('e_u').innerHTML=opts($('e_c').value,'');pv()};$('e_u').onchange=()=>{if($('e_u').value==='__new'){const n=prompt('Nom de la nouvelle sous-catégorie :'),c=cat($('e_c').value);if(n&&n.trim()){const x={id:uid(),name:n.trim(),color:PAL[c.subs.length%PAL.length]};c.subs.push(x);$('e_u').innerHTML=opts(c.id,x.id);render()}else $('e_u').innerHTML=opts($('e_c').value,'')}pv()};$('e_t').oninput=pv;const ml=()=>{const q=$('e_l').value.trim(),a=$('e_m');a.classList.toggle('off',!q);a.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q)};$('e_l').oninput=ml;ml();$('e_k').onclick=()=>modal('');
 if(id)$('e_x').onclick=()=>{S.events=S.events.filter(e=>e.id!==id);modal('');render()};
 $('e_ok').onclick=()=>{const d=$('e_d').value,s=$('e_s').value||'09:00',e=$('e_e').value||s;if(!d)return;let end=d+'T'+e;if(end<=d+'T'+s)end=iso(new Date(+new Date(d+'T'+s)+36e5));
 const n={id:id||uid(),title:$('e_t').value.trim()||'Sans titre',start:d+'T'+s,end,cat:$('e_c').value,sub:$('e_u').value,rep:$('e_r').value,loc:$('e_l').value.trim(),notes:$('e_n').value};
 S.events=id?S.events.map(x=>x.id===id?n:x):[...S.events,n];modal('');render()}}
-function settings(){const row=(a,c,s,col,name)=>`<div class="row ${s?'sub':''}"><input type="color" value="${col}" data-a="${s?'sc':'cc'}" data-c="${c}" data-s="${s||''}"><input type="text" value="${esc(name)}" data-a="${s?'sn':'cn'}" data-c="${c}" data-s="${s||''}"><button data-a="${s?'sd':'cd'}" data-c="${c}" data-s="${s||''}" aria-label="Supprimer">✕</button></div>`;
-modal('<h2>Catégories et sous-catégories</h2>'+S.cats.map(c=>`<div class="cat">${row('',c.id,'',c.color,c.name)}${c.subs.map(s=>row('',c.id,s.id,s.color,s.name)).join('')}<button class="sub" data-a="sa" data-c="${c.id}">+ Sous-catégorie</button></div>`).join('')+'<div class="acts"><button data-a="ca" style="margin-right:auto">+ Catégorie</button><button class="pr" id="e_k">Terminer</button></div>');$('e_k').onclick=()=>modal('')}
+function settings(){const row=(a,c,s,col,name)=>`<div class="row ${s?'sub':''}"><input type="color" value="${col}" data-a="${s?'sc':'cc'}" data-c="${c}" data-s="${s||''}"><input type="text" class="hx" value="${col.toUpperCase()}" maxlength="7" aria-label="Code hexadécimal" data-a="${s?'sh':'ch'}" data-c="${c}" data-s="${s||''}"><input type="text" value="${esc(name)}" data-a="${s?'sn':'cn'}" data-c="${c}" data-s="${s||''}"><button data-a="${s?'sd':'cd'}" data-c="${c}" data-s="${s||''}" aria-label="Supprimer">✕</button></div>`;
+modal('<h2>Catégories et sous-catégories</h2>'+S.cats.map(c=>`<div class="cat">${row('',c.id,'',c.color,c.name)}${c.subs.map(s=>row('',c.id,s.id,s.color,s.name)).join('')}<button class="sub" data-a="sa" data-c="${c.id}">+ Sous-catégorie</button></div>`).join('')+'<div class="acts st"><button data-a="ca" style="margin-right:auto">+ Catégorie</button><button class="pr" id="e_k">Terminer</button></div>');$('e_k').onclick=()=>modal('')}
 function act(el,type){const a=el.dataset.a;if(!a)return;const c=S.cats.find(x=>x.id===el.dataset.c),s=c&&c.subs.find(x=>x.id===el.dataset.s);
-if(a==='cc')c.color=el.value;else if(a==='cn')c.name=el.value||c.name;else if(a==='sc')s.color=el.value;else if(a==='sn')s.name=el.value||s.name;
+if(a==='cc')c.color=el.value;else if(a==='cn')c.name=el.value||c.name;else if(a==='sc')s.color=el.value;else if(a==='sn')s.name=el.value||s.name;else if(a==='ch'||a==='sh'){let v='#'+el.value.trim().replace('#','');if(/^#[0-9a-f]{3}$/i.test(v))v='#'+v.slice(1).split('').map(x=>x+x).join('');const o=a==='ch'?c:s;if(/^#[0-9a-f]{6}$/i.test(v)){o.color=v.toUpperCase();el.parentNode.querySelector('input[type=color]').value=v.toLowerCase()}else{if(type==='change')el.value=o.color.toUpperCase();return}}
 if(type==='click'){if(a==='cd'){if(S.cats.length<2)return;S.cats=S.cats.filter(x=>x!==c);S.events.forEach(e=>{if(e.cat===c.id){e.cat=S.cats[0].id;e.sub=''}})}
 else if(a==='sd'){c.subs=c.subs.filter(x=>x!==s);S.events.forEach(e=>{if(e.sub===s.id)e.sub=''})}
-else if(a==='sa')c.subs.push({id:uid(),name:'Nouvelle sous-catégorie',color:'#C77DFF'});else if(a==='ca')S.cats.push({id:uid(),name:'Nouvelle catégorie',color:'#7A7F99',subs:[]});else return;settings()}render()}
+else if(a==='sa')c.subs.push({id:uid(),name:'Nouvelle sous-catégorie',color:PAL[c.subs.length%PAL.length]});else if(a==='ca')S.cats.push({id:uid(),name:'Nouvelle catégorie',color:PAL[S.cats.length%PAL.length],subs:[]});else return;settings();focusNew(a,c)}render()}
+function focusNew(a,c){const L=[...document.querySelectorAll('#mo .cat')];let i;if(a==='ca'){i=L[L.length-1].querySelector('input[data-a="cn"]')}else if(a==='sa'){const b=L.find(x=>x.querySelector('input[data-a="cn"]').dataset.c===c.id),R2=b.querySelectorAll('input[data-a="sn"]');i=R2[R2.length-1]}if(i){i.focus();i.select();i.scrollIntoView({block:'center'})}}
 function ics(t){t=t.replace(/\r?\n[ \t]/g,'');const out=[];const pd=v=>{const m=/(\d{4})(\d\d)(\d\d)(?:T(\d\d)(\d\d)(\d\d)?(Z)?)?/.exec(v);if(!m)return null;const a=m.slice(1).map(Number);return m[4]===undefined?{d:new Date(a[0],a[1]-1,a[2]),all:1}:{d:m[7]?new Date(Date.UTC(a[0],a[1]-1,a[2],a[3],a[4],a[5]||0)):new Date(a[0],a[1]-1,a[2],a[3],a[4])}};
 t.split('BEGIN:VEVENT').slice(1).forEach(b=>{const g=k=>{const m=new RegExp('^'+k+'(?:;[^:\\n]*)?:(.*)$','m').exec(b);return m?m[1].trim():''};const s=pd(g('DTSTART'));if(!s)return;let e=pd(g('DTEND')),en=e?e.d:null;if(!en)en=new Date(+s.d+36e5);if(s.all&&e)en=new Date(+en-6e4);if(s.all&&!e)en=new Date(+s.d+864e5-6e4);
 const r=/FREQ=(DAILY|WEEKLY|MONTHLY|YEARLY)/.exec(g('RRULE'));out.push({id:uid(),title:g('SUMMARY').replace(/\\,/g,',').replace(/\\n/g,' ')||'Sans titre',start:iso(s.d),end:iso(en),cat:S.cats[0].id,sub:'',rep:r?r[1].toLowerCase():'none',loc:g('LOCATION').replace(/\\,/g,','),notes:g('DESCRIPTION').replace(/\\n/g,'\n').replace(/\\,/g,',')})});return out}
@@ -135,14 +137,13 @@ if(t.dataset&&t.dataset.a&&t.tagName==='BUTTON'){act(t,'click');return}
 const ev=t.closest('.ev');if(ev&&ev.dataset.id&&$('mn').contains(ev)){edit(ev.dataset.id);return}
 const cell=t.closest('[data-day]');if(cell&&$('mn').contains(cell)){let s=cell.dataset.day;if(cell.classList.contains('col')){const y=e.clientY-cell.getBoundingClientRect().top,m=Math.floor(y/HH*2)*30;s=s.slice(0,10)+`T${pad(Math.floor(m/60))}:${pad(m%60)}`}else s=s.slice(0,10)+'T09:00';edit('',s)}});
 document.addEventListener('change',e=>{const t=e.target;if(t.dataset.f){const i=S.hidden.indexOf(t.dataset.f);i<0?S.hidden.push(t.dataset.f):S.hidden.splice(i,1);render()}else if(t.dataset.a)act(t,'change')});
-document.addEventListener('input',e=>{if(e.target.type==='color'&&e.target.dataset.a)act(e.target,'input')});
+document.addEventListener('input',e=>{if((e.target.type==='color'||e.target.classList.contains('hx'))&&e.target.dataset.a){const h=e.target.parentNode.querySelector('.hx');if(h)h.value=e.target.value.toUpperCase();act(e.target,'input')}});
 $('td').onclick=()=>{S.date=new Date();render()};$('pv').onclick=()=>nav(-1);$('nx').onclick=()=>nav(1);$('st').onclick=settings;$('bg').onclick=()=>$('sd').classList.toggle('open');
 $('th').onclick=()=>{S.theme=S.theme==='dark'?'light':'dark';render()};$('im').onclick=()=>$('fi').click();
 $('add').onclick=()=>{const n=new Date();n.setMinutes(0);n.setHours(n.getHours()+1);edit('',iso(n))};
 $('fi').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const L=ics(String(r.result));S.events=[...S.events,...L];render();alert(L.length+' événement(s) importé(s) dans la catégorie « '+S.cats[0].name+' ».')};r.readAsText(f);e.target.value=''};
 /* ===== SYNCHRO SUPABASE ===== */
-const SUPABASE_URL='https://osxucgbiqbuszgqdgumo.supabase.co';
-const SUPABASE_KEY='sb_publishable_gTr1cbgqsM92vdV_-VScRQ_m0Z9uEt9';
+const SUPABASE_URL=(window.AGENDA_CONFIG||{}).url||'',SUPABASE_KEY=(window.AGENDA_CONFIG||{}).key||'';
 const sb=(window.supabase&&SUPABASE_URL.startsWith('https'))?supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
 let synced={},timer=null,busy=false,ready=false,USER='';
 const setSy=t=>{$('sy').textContent=t};
@@ -168,7 +169,7 @@ const poll=()=>{if(ready&&!timer&&!busy&&!$('mo').innerHTML)pull()};
 const lmsg=t=>{$('lx').textContent=t};
 function showLogin(t){$('lg').style.display='flex';lmsg(t||'')}
 async function enter(ses){USER=ses.user.id;$('lg').style.display='none';setSy('Chargement…');await pull();setInterval(poll,60000);window.addEventListener('focus',poll)}
-async function start(){if(!sb){showLogin('Il faut d’abord coller ton URL et ta clé Supabase dans le fichier (étape 3 du guide).');return}
+async function start(){if(!sb){showLogin('Il faut d’abord coller ton URL et ta clé Supabase dans le fichier config.js.');return}
 const{data}=await sb.auth.getSession();if(data.session)enter(data.session);else showLogin()}
 $('li').onclick=async()=>{lmsg('Connexion…');const{data,error}=await sb.auth.signInWithPassword({email:$('lm').value.trim(),password:$('lp').value});if(error){console.error(error);lmsg('Connexion impossible : e-mail ou mot de passe incorrect, ou e-mail pas encore confirmé.')}else enter(data.session)};
 $('lc').onclick=async()=>{lmsg('Création…');const{data,error}=await sb.auth.signUp({email:$('lm').value.trim(),password:$('lp').value});if(error){console.error(error);lmsg('Création impossible : '+error.message)}else if(data.session)enter(data.session);else lmsg('Compte créé. Ouvre l’e-mail reçu, clique sur le lien de confirmation, puis reviens te connecter.')};
