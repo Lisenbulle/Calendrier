@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="fr" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Mon agenda</title>
+<!DOCTYPE html><html lang="fr" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Calendrier</title>
 <style>
 :root{color-scheme:dark;--bg:#14151a;--sf:#1d1f27;--sf2:#2a2d3a;--tx:#eceef4;--mu:#a2a8bc;--bd:#343849;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 :root[data-theme=light]{color-scheme:light;--bg:#f4f5f9;--sf:#fff;--sf2:#eceef5;--tx:#1b1d27;--mu:#5d6378;--bd:#d9dce8}
@@ -50,7 +50,7 @@ main{flex:1;overflow:auto;min-width:0}
 <div class="tabs" id="tabs"></div><button id="st" title="Paramètres">⚙ Réglages</button><button id="im" title="Importer un fichier .ics">⇪ Importer</button><span id="sy" style="font-size:12px;color:var(--mu)"></span><button id="lo">Déconnexion</button><button id="th" aria-label="Thème">◐</button><input type="file" id="fi" accept=".ics,text/calendar" hidden></header>
 <div class="wrap"><aside id="sd"></aside><main id="mn"></main></div>
 <button class="fab" id="add" aria-label="Ajouter un événement">+</button><div id="mo"></div>
-<div id="lg" class="ov" style="display:none;z-index:60;background:var(--bg)"><div class="md"><h2>Mon agenda</h2><label for="lm">E-mail</label><input id="lm" type="email" autocomplete="username"><label for="lp">Mot de passe (6 caractères minimum)</label><input id="lp" type="password" autocomplete="current-password"><p id="lx" style="color:#ff9a9a;min-height:1.4em;font-size:13px;margin:8px 0 0"></p><div class="acts"><button id="lc">Créer mon compte</button><button class="pr" id="li">Se connecter</button></div></div></div>
+<div id="lg" class="ov" style="display:none;z-index:60;background:var(--bg)"><div class="md"><h2>Calendrier</h2><label for="lm">E-mail</label><input id="lm" type="email" autocomplete="username"><label for="lp">Mot de passe (6 caractères minimum)</label><input id="lp" type="password" autocomplete="current-password"><p id="lx" style="color:#ff9a9a;min-height:1.4em;font-size:13px;margin:8px 0 0"></p><div class="acts"><button id="lc">Créer mon compte</button><button class="pr" id="li">Se connecter</button></div></div></div>
 <script>
 const HH=48,DAYS=['lun.','mar.','mer.','jeu.','ven.','sam.','dim.'],VIEWS=[['day','Jour'],['week','Semaine'],['month','Mois'],['list','À venir']];
 const uid=()=>(window.crypto&&crypto.randomUUID)?crypto.randomUUID():Math.random().toString(36).slice(2,9)+Date.now().toString(36);

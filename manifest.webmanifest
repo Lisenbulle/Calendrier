@@ -1,7 +1,7 @@
 {
-  "name": "Mon agenda",
-  "short_name": "Agenda",
-  "description": "Mon agenda personnel synchronis\u00e9",
+  "name": "Calendrier",
+  "short_name": "Calendrier",
+  "description": "Mon calendrier personnel synchronis\u00e9",
   "lang": "fr",
   "start_url": "./",
   "scope": "./",
