@@ -1,4 +1,4 @@
 window.AGENDA_CONFIG={
-  url:'COLLE_ICI_TON_URL',
-  key:'COLLE_ICI_TA_CLE'
+  url:'https://osxucgbiqbuszgqdgumo.supabase.co',
+  key:'sb_publishable_gTr1cbgqsM92vdV_-VScRQ_m0Z9uEt9'
 };
